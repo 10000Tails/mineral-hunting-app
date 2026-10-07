@@ -17,7 +17,7 @@ export default function SiteDetailScreen() {
   if (!site) {
     return (
       <View style={styles.center}>
-        <Text style={styles.muted}>This site isn't loaded. Go back to the map and tap it again.</Text>
+        <Text style={styles.muted}>{"This site isn't loaded. Go back to the map and tap it again."}</Text>
       </View>
     );
   }
@@ -79,8 +79,8 @@ export default function SiteDetailScreen() {
       )}
 
       <Text style={styles.note}>
-        Many sites are on private land or are old workings with open shafts and unstable ground. Get the
-        landowner's permission and never enter mine openings.
+        {'Many sites are on private land or are old workings with open shafts and unstable ground. ' +
+          "Get the landowner's permission and never enter mine openings."}
       </Text>
     </ScrollView>
   );

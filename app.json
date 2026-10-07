@@ -37,7 +37,17 @@
         {
           "locationWhenInUsePermission": "Mineral Hunter uses your location to show mineral sites near you and point you toward them."
         }
-      ]
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#021F46",
+          "image": "./assets/images/splash-bg.png",
+          "resizeMode": "cover",
+          "enableFullScreenImage_legacy": true
+        }
+      ],
+      "expo-font"
     ]
   }
 }

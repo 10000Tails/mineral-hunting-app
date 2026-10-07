@@ -8,7 +8,7 @@ export default function TabsLayout() {
   return (
     <Tabs screenOptions={{ tabBarActiveTintColor: theme.accent, headerShown: false }}>
       <Tabs.Screen
-        name="index"
+        name="map"
         options={{
           title: 'Map',
           tabBarIcon: ({ color, size }) => <Ionicons name="map" color={color} size={size} />,

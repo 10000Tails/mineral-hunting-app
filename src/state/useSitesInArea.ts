@@ -1,37 +1,41 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { fetchSites } from '../data/sites';
 import type { BBox, MineralSite } from '../data/types';
+
+interface Result {
+  requestKey: string;
+  sites: MineralSite[];
+  error: string | null;
+}
 
 /**
  * Loads sites for a bounding box, cancelling stale requests when the box changes.
  * Pass null to skip loading (e.g. when zoomed too far out).
  */
 export function useSitesInArea(bbox: BBox | null, limit = 500) {
-  const [sites, setSites] = useState<MineralSite[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [reloadKey, setReloadKey] = useState(0);
-  const key = bbox ? [bbox.minLon, bbox.minLat, bbox.maxLon, bbox.maxLat].map((n) => n.toFixed(4)).join(',') : null;
-  const bboxRef = useRef(bbox);
-  bboxRef.current = bbox;
+  const [result, setResult] = useState<Result | null>(null);
+  const [reloadCount, setReloadCount] = useState(0);
+  const areaKey = bbox
+    ? [bbox.minLon, bbox.minLat, bbox.maxLon, bbox.maxLat].map((n) => n.toFixed(4)).join(',')
+    : null;
+  const requestKey = areaKey ? `${areaKey}|${limit}|${reloadCount}` : null;
 
   useEffect(() => {
-    if (!key || !bboxRef.current) return;
+    if (!requestKey) return;
+    const [minLon, minLat, maxLon, maxLat] = requestKey.split('|')[0].split(',').map(Number);
     const controller = new AbortController();
-    setLoading(true);
-    setError(null);
 
     const timer = setTimeout(() => {
-      fetchSites(bboxRef.current!, { limit, signal: controller.signal })
-        .then((s) => {
-          setSites(s);
-          setLoading(false);
-        })
+      fetchSites({ minLon, minLat, maxLon, maxLat }, { limit, signal: controller.signal })
+        .then((sites) => setResult({ requestKey, sites, error: null }))
         .catch((e) => {
           if (controller.signal.aborted) return;
-          setError(e instanceof Error ? e.message : String(e));
-          setLoading(false);
+          setResult((prev) => ({
+            requestKey,
+            sites: prev?.sites ?? [],
+            error: e instanceof Error ? e.message : String(e),
+          }));
         });
     }, 350); // wait for the map to settle
 
@@ -39,7 +43,15 @@ export function useSitesInArea(bbox: BBox | null, limit = 500) {
       clearTimeout(timer);
       controller.abort();
     };
-  }, [key, limit, reloadKey]);
+  }, [requestKey, limit]);
 
-  return { sites, loading, error, limit, reload: () => setReloadKey((k) => k + 1) };
+  const current = result?.requestKey === requestKey;
+  return {
+    // Keep showing the last sites while the next area loads.
+    sites: result?.sites ?? [],
+    loading: !!requestKey && !current,
+    error: current ? result!.error : null,
+    limit,
+    reload: () => setReloadCount((c) => c + 1),
+  };
 }

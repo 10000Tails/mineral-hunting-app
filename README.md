@@ -3,6 +3,8 @@
 An iPhone app (built with Expo / React Native) for finding mine and mineral sites from the
 [USGS Mineral Resources Data System (MRDS)](https://mrdata.usgs.gov/mrds/).
 
+- **Welcome** — the mountain artwork with tilt-driven parallax; the Mineral Hunter logo and the
+  Create Account / Log In buttons fade in together over it.
 - **Map** — USGS sites as color-coded pins by mineral, with filters by mineral group and site
   type, satellite/hybrid map layers, and a detail page for each site (commodities, distance,
   directions, full USGS record).
@@ -29,17 +31,20 @@ on the same Wi-Fi, use `npx expo start --tunnel`.
 ```
 src/
   app/                 Screens and navigation (Expo Router — every file is a route)
+    index.tsx          Welcome screen (first screen on launch)
+    create-account.tsx, log-in.tsx
     (tabs)/            One file per tab: Map, Finder
     site/[id].tsx      Site detail page
     filters.tsx        Filters sheet
   features/            The actual screen code, one folder per feature
-    map/  finder/  site/  filters/
+    welcome/  auth/  map/  finder/  site/  filters/
   data/                Where sites come from
+    auth.ts            Account functions (placeholder until a provider is chosen)
     types.ts           MineralSite and the SiteSource interface
     sites.ts           fetchSites(): tries each source in order, caches results
     mrds/              USGS sources (ArcGIS GeoJSON first, OGC WFS as fallback)
   state/               Shared hooks: filters, location, compass heading, site loading
-  config/              Mineral groups & colors (commodities.ts), theme colors
+  config/              Branding (brand.ts), mineral groups & colors (commodities.ts), theme
   lib/                 Geo math (distance, bearing, formatting)
 ```
 
@@ -49,15 +54,21 @@ src/
   `src/app/(tabs)/`, and a `Tabs.Screen` entry in `src/app/(tabs)/_layout.tsx`.
 - **A new data source** (e.g. a state geological survey, your own saved spots) — implement
   `SiteSource` from `src/data/types.ts` and add it to `SOURCES` in `src/data/sites.ts`.
+- **Real accounts** — fill in `createAccount` and `logIn` in `src/data/auth.ts`. Until then the
+  forms validate input and then offer a way through to the map.
 - **Change pin colors or mineral groups** — edit `src/config/commodities.ts`.
 
 ## Checks
 
 ```bash
 npm run typecheck
+npm run lint
 ```
 
 ## Notes
+
+- The full-screen mountain launch screen only shows in a real build (`eas build`); Expo Go shows
+  its own loading screen first, then the welcome screen.
 
 - Site data is loaded live for the area on screen (up to 500 sites per view on the map). Zoom in
   if a view says it's capped.
