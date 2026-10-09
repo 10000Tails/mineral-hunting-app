@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 
 import { brandColors } from '../config/brand';
 import { theme } from '../config/theme';
+import { FavoritesProvider } from '../state/favorites';
 import { FiltersProvider } from '../state/filters';
 
 // Keep the native splash (the same mountain artwork) up until fonts are ready,
@@ -26,6 +27,7 @@ export default function RootLayout() {
   if (!ready) return null;
 
   return (
+    <FavoritesProvider>
     <FiltersProvider>
       <StatusBar style="dark" />
       <Stack screenOptions={{ headerTintColor: theme.accent, contentStyle: { backgroundColor: brandColors.navy } }}>
@@ -37,5 +39,6 @@ export default function RootLayout() {
         <Stack.Screen name="filters" options={{ title: 'Filters', presentation: 'modal', contentStyle: { backgroundColor: theme.background } }} />
       </Stack>
     </FiltersProvider>
+    </FavoritesProvider>
   );
 }

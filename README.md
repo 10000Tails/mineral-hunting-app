@@ -6,10 +6,14 @@ An iPhone app (built with Expo / React Native) for finding mine and mineral site
 - **Welcome** — the mountain artwork with tilt-driven parallax; the Mineral Hunter logo and the
   Create Account / Log In buttons fade in together over it.
 - **Map** — USGS sites as color-coded pins by mineral, with filters by mineral group and site
-  type, satellite/hybrid map layers, and a detail page for each site (commodities, distance,
-  directions, full USGS record).
+  type, zoom buttons, and satellite/hybrid layers. Tapping a pin opens a pop-up with coordinates
+  and location, development status, commodity type, economic information (operation type,
+  production size, deposit type) and other minerals reported at the site, pulled from the full
+  USGS record.
 - **Finder** — point your camera around and nearby sites float over the view in the direction
   they lie, with distance, a top-down radar, and the nearest site called out.
+- **Favorites** — tap the heart on any site to save it. Favorites are stored on the phone, and
+  tapping one shows it on the map.
 
 ## Run it on your iPhone
 
@@ -33,17 +37,18 @@ src/
   app/                 Screens and navigation (Expo Router — every file is a route)
     index.tsx          Welcome screen (first screen on launch)
     create-account.tsx, log-in.tsx
-    (tabs)/            One file per tab: Map, Finder
+    (tabs)/            One file per tab: Map, Finder, Favorites
     site/[id].tsx      Site detail page
     filters.tsx        Filters sheet
   features/            The actual screen code, one folder per feature
-    welcome/  auth/  map/  finder/  site/  filters/
+    welcome/  auth/  map/  finder/  favorites/  site/  filters/
   data/                Where sites come from
     auth.ts            Account functions (placeholder until a provider is chosen)
     types.ts           MineralSite and the SiteSource interface
     sites.ts           fetchSites(): tries each source in order, caches results
-    mrds/              USGS sources (ArcGIS GeoJSON first, OGC WFS as fallback)
-  state/               Shared hooks: filters, location, compass heading, site loading
+    mrds/              USGS sources (ArcGIS GeoJSON first, OGC WFS as fallback);
+                       details.ts fetches one site's full record for the pop-up
+  state/               Shared state: filters, favorites, location, compass, site loading
   config/              Branding (brand.ts), mineral groups & colors (commodities.ts), theme
   lib/                 Geo math (distance, bearing, formatting)
 ```

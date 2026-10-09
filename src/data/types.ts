@@ -23,6 +23,31 @@ export interface MineralSite {
   url?: string;
 }
 
+/**
+ * Extra facts from the full USGS record for one site. Every field is optional:
+ * MRDS records vary a lot in how much was filled in.
+ */
+export interface SiteDetails {
+  country?: string;
+  state?: string;
+  county?: string;
+  /** Metallic / Nonmetallic / both, as USGS recorded it. */
+  commodityType?: string;
+  majorCommodities?: string;
+  minorCommodities?: string;
+  traceCommodities?: string;
+  /** Surface, Underground, Placer… */
+  operationType?: string;
+  productionSize?: string;
+  depositType?: string;
+  oreMinerals?: string;
+  gangueMinerals?: string;
+  otherMaterials?: string;
+  discoveryYear?: string;
+  firstProductionYear?: string;
+  lastProductionYear?: string;
+}
+
 /** Geographic bounding box in decimal degrees (WGS84). */
 export interface BBox {
   minLon: number;

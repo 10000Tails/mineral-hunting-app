@@ -52,3 +52,19 @@ export function groupForCodes(codes: string[]): CommodityGroup {
   }
   return OTHER_GROUP;
 }
+
+/** Codes for metals; any other code counts as nonmetallic. */
+const METALLIC_CODES = new Set([
+  'AU', 'AG', 'CU', 'PB', 'ZN', 'FE', 'MN', 'CR', 'TI', 'V', 'NI', 'CO', 'MO', 'W', 'U', 'TH',
+  'REE', 'LI', 'BE', 'NB', 'TA', 'SN', 'PGE', 'PT', 'PD', 'HG', 'SB', 'AS', 'BI', 'AL', 'CD',
+  'GA', 'GE', 'IN', 'MG', 'RE', 'SE', 'TE', 'ZR', 'HF', 'CS', 'RB', 'SR', 'Y', 'SC', 'OS', 'IR', 'RH', 'RU',
+]);
+
+/** Metallic / Nonmetallic, worked out from the commodity codes when USGS didn't record it. */
+export function commodityKindFromCodes(codes: string[]): string | undefined {
+  if (codes.length === 0) return undefined;
+  const metallic = codes.some((c) => METALLIC_CODES.has(c));
+  const nonmetallic = codes.some((c) => !METALLIC_CODES.has(c));
+  if (metallic && nonmetallic) return 'Metallic & nonmetallic';
+  return metallic ? 'Metallic' : 'Nonmetallic';
+}

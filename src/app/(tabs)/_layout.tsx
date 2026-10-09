@@ -21,6 +21,13 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, size }) => <Ionicons name="camera" color={color} size={size} />,
         }}
       />
+      <Tabs.Screen
+        name="favorites"
+        options={{
+          title: 'Favorites',
+          tabBarIcon: ({ color, size }) => <Ionicons name="heart" color={color} size={size} />,
+        }}
+      />
     </Tabs>
   );
 }
