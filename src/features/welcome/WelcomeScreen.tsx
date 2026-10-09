@@ -1,12 +1,12 @@
 import { router, useIsFocused } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { Animated, Easing, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Animated, Easing, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BrandButton } from '../../components/BrandButton';
 import { ParallaxBackdrop } from '../../components/ParallaxBackdrop';
-import { brandImages, LOGO_ASPECT } from '../../config/brand';
+import { brandColors, brandImages, LOGO_ASPECT } from '../../config/brand';
 import { useTiltParallax } from '../../state/useTiltParallax';
 
 /** Delay before the branding appears, so the landscape gets a moment on its own. */
@@ -76,6 +76,14 @@ export default function WelcomeScreen() {
       <Animated.View style={[styles.buttons, { paddingBottom: insets.bottom + 28 }, fadeUp]}>
         <BrandButton label="Create Account" onPress={() => router.push('/create-account')} />
         <BrandButton label="Log In" variant="secondary" onPress={() => router.push('/log-in')} />
+        <Pressable
+          onPress={() => router.replace('/map')}
+          hitSlop={12}
+          accessibilityRole="link"
+          style={styles.guest}
+        >
+          <Text style={styles.guestText}>Explore without an account</Text>
+        </Pressable>
       </Animated.View>
     </ParallaxBackdrop>
   );
@@ -84,4 +92,12 @@ export default function WelcomeScreen() {
 const styles = StyleSheet.create({
   logoArea: { flex: 1, alignItems: 'center' },
   buttons: { position: 'absolute', left: 24, right: 24, bottom: 0, gap: 14 },
+  guest: { alignSelf: 'center', paddingVertical: 6 },
+  guestText: {
+    color: brandColors.mist,
+    fontSize: 15,
+    textDecorationLine: 'underline',
+    textShadowColor: 'rgba(0,0,0,0.6)',
+    textShadowRadius: 4,
+  },
 });
