@@ -62,6 +62,9 @@ src/
 - **Real accounts** — fill in `createAccount` and `logIn` in `src/data/auth.ts`. Until then the
   forms validate input and then offer a way through to the map.
 - **Change pin colors or mineral groups** — edit `src/config/commodities.ts`.
+- **Change the app icon** — replace `assets/images/app-icon.png` (1024 × 1024, square, no
+  transparency, no rounded corners — iOS rounds them). Expo makes every size from it at build
+  time. The original icon artwork in all sizes is kept in `assets/icon-source/`.
 
 ## Checks
 
