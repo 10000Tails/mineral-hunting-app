@@ -3,19 +3,25 @@
     "name": "Mineral Hunter",
     "slug": "mineral-hunting-app",
     "scheme": "mineralhunter",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/app-icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.robertsbuildinggroup.mineralhunter",
+      "usesAppleSignIn": true,
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#040E1A",
         "foregroundImage": "./assets/images/android-icon-foreground.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.robertsbuildinggroup.mineralhunter"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
@@ -45,7 +51,8 @@
           "enableFullScreenImage_legacy": true
         }
       ],
-      "expo-font"
+      "expo-font",
+      "expo-apple-authentication"
     ]
   }
 }

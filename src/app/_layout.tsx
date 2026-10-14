@@ -8,17 +8,31 @@ import { useEffect } from 'react';
 
 import { brandColors } from '../config/brand';
 import { theme } from '../config/theme';
+import { AuthProvider, useAuth } from '../state/auth';
 import { FavoritesProvider } from '../state/favorites';
 import { FiltersProvider } from '../state/filters';
 
-// Keep the native splash (the same mountain artwork) up until fonts are ready,
-// then cross-fade into the welcome screen so the background looks continuous.
+// Keep the native splash (the same mountain artwork) up until fonts and sign-in state are
+// ready, then cross-fade into the first screen so the background looks continuous.
 SplashScreen.preventAutoHideAsync().catch(() => {});
 SplashScreen.setOptions({ duration: 400, fade: true });
 
 export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <FavoritesProvider>
+        <FiltersProvider>
+          <AppStack />
+        </FiltersProvider>
+      </FavoritesProvider>
+    </AuthProvider>
+  );
+}
+
+function AppStack() {
   const [fontsLoaded, fontError] = useFonts({ Cinzel_600SemiBold, Cinzel_700Bold });
-  const ready = fontsLoaded || !!fontError;
+  const { initializing } = useAuth();
+  const ready = (fontsLoaded || !!fontError) && !initializing;
 
   useEffect(() => {
     if (ready) SplashScreen.hideAsync().catch(() => {});
@@ -27,18 +41,17 @@ export default function RootLayout() {
   if (!ready) return null;
 
   return (
-    <FavoritesProvider>
-    <FiltersProvider>
+    <>
       <StatusBar style="dark" />
       <Stack screenOptions={{ headerTintColor: theme.accent, contentStyle: { backgroundColor: brandColors.navy } }}>
         <Stack.Screen name="index" options={{ headerShown: false, animation: 'fade' }} />
-        <Stack.Screen name="create-account" options={{ headerShown: false, animation: 'fade' }} />
-        <Stack.Screen name="log-in" options={{ headerShown: false, animation: 'fade' }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false, gestureEnabled: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false, gestureEnabled: false, animation: 'fade' }} />
         <Stack.Screen name="site/[id]" options={{ title: 'Site', contentStyle: { backgroundColor: theme.background } }} />
-        <Stack.Screen name="filters" options={{ title: 'Filters', presentation: 'modal', contentStyle: { backgroundColor: theme.background } }} />
+        <Stack.Screen
+          name="filters"
+          options={{ title: 'Filters', presentation: 'modal', contentStyle: { backgroundColor: theme.background } }}
+        />
       </Stack>
-    </FiltersProvider>
-    </FavoritesProvider>
+    </>
   );
 }

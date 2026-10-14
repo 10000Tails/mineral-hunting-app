@@ -1,4 +1,4 @@
-import { router, useIsFocused } from 'expo-router';
+import { Redirect, router, useIsFocused } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { Animated, Easing, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
@@ -6,7 +6,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BrandButton } from '../../components/BrandButton';
 import { ParallaxBackdrop } from '../../components/ParallaxBackdrop';
+import { SignInButtons, useSignInOptions } from '../../components/SignInButtons';
 import { brandColors, brandImages, LOGO_ASPECT } from '../../config/brand';
+import { useAuth } from '../../state/auth';
 import { useTiltParallax } from '../../state/useTiltParallax';
 
 /** Delay before the branding appears, so the landscape gets a moment on its own. */
@@ -18,6 +20,8 @@ export default function WelcomeScreen() {
   const { width, height } = useWindowDimensions();
   const focused = useIsFocused();
   const tilt = useTiltParallax(focused);
+  const { user, initializing } = useAuth();
+  const { available: signInAvailable } = useSignInOptions();
 
   const [reveal] = useState(() => new Animated.Value(0));
   const [zoom] = useState(() => new Animated.Value(1.16));
@@ -52,8 +56,13 @@ export default function WelcomeScreen() {
     ],
   };
 
+  const goToMap = () => router.replace('/map');
+
   const logoWidth = Math.min(width * 0.72, 340);
   const logoHeight = logoWidth / LOGO_ASPECT;
+
+  // Already signed in from an earlier visit: go straight into the app.
+  if (user) return <Redirect href="/map" />;
 
   return (
     <ParallaxBackdrop tilt={tilt} scale={zoom}>
@@ -73,18 +82,18 @@ export default function WelcomeScreen() {
         </Animated.View>
       </View>
 
-      <Animated.View style={[styles.buttons, { paddingBottom: insets.bottom + 28 }, fadeUp]}>
-        <BrandButton label="Create Account" onPress={() => router.push('/create-account')} />
-        <BrandButton label="Log In" variant="secondary" onPress={() => router.push('/log-in')} />
-        <Pressable
-          onPress={() => router.replace('/map')}
-          hitSlop={12}
-          accessibilityRole="link"
-          style={styles.guest}
-        >
-          <Text style={styles.guestText}>Explore without an account</Text>
-        </Pressable>
-      </Animated.View>
+      {!initializing && (
+        <Animated.View style={[styles.buttons, { paddingBottom: insets.bottom + 28 }, fadeUp]}>
+          <SignInButtons appearance="dark" onSignedIn={goToMap} />
+          {signInAvailable ? (
+            <Pressable onPress={goToMap} hitSlop={12} accessibilityRole="link" style={styles.guest}>
+              <Text style={styles.guestText}>Explore without an account</Text>
+            </Pressable>
+          ) : (
+            <BrandButton label="Explore the Map" onPress={goToMap} />
+          )}
+        </Animated.View>
+      )}
     </ParallaxBackdrop>
   );
 }
